@@ -11,6 +11,7 @@ interface UserRepositiryInterface
     public function store(array $data);
 
     public function all();
+    public function paginate();
 
     public function find($id);
 

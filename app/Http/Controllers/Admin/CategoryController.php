@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Requests\Admin\StoreCategoryRequest;
+use App\Http\Requests\Admin\UpdateCategoryRequest;
 use App\Repositories\CategoryRepository;
-use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
@@ -20,7 +19,7 @@ class CategoryController extends Controller
 
     public function index()
     {
-        return response()->json($this->categoryRepository->all(), 200);
+        return response()->json($this->categoryRepository->paginate(10), 200);
 
 //        $users = $this->userRepository->paginate(5);
 //

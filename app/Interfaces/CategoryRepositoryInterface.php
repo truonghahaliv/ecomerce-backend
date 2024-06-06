@@ -7,7 +7,8 @@ use App\Models\Category;
 interface CategoryRepositoryInterface
 {
     //
-    public function all();
+    public function index();
+    public function paginate();
 
     public function find($id);
 
