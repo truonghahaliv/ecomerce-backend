@@ -8,20 +8,31 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductRepository implements ProductRepositoryInterface
 {
+    protected Product $product;
 
-    public function index()
+    public function __construct(Product $product)
     {
-        return Product::all();
+        $this->product = $product;
+    }
+
+    public function paginate($perPage = 10)
+    {
+        return $this->product->select()->orderBy('id', 'desc')->paginate($perPage);
     }
 
     public function getById($id)
     {
-        return Product::find($id);
+        return $this->product->find($id);
+    }
+
+    public function index()
+    {
+        return $this->product->select('id', 'name', )->orderBy('id', 'desc')->get();
     }
 
     public function store(array $data)
     {
-        return Product::create($data);
+        return $this->product->create($data);
     }
 
     public function update($id, array $data)

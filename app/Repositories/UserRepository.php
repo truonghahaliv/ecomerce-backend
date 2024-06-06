@@ -15,9 +15,9 @@ class UserRepository implements UserRepositiryInterface
         $this->user = $user;
     }
 
-    public function paginate($perPage = 5)
+    public function paginate($perPage = 10)
     {
-        return $this->user->orderBy('id', 'desc')->paginate($perPage);
+        return $this->user->select('id', 'name', 'email')->orderBy('id', 'desc')->paginate($perPage);
     }
 
     public function find($id)
@@ -27,7 +27,7 @@ class UserRepository implements UserRepositiryInterface
 
     public function all()
     {
-        return $this->user->select('id', 'name', 'email')->get();
+        return $this->user->select('id', 'name', 'email')->orderBy('id', 'desc')->get();
     }
 
     public function store(array $data)

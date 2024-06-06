@@ -6,6 +6,7 @@ interface ProductRepositoryInterface
 {
     //
     public function index();
+    public function paginate();
     public function getById($id);
     public function store(array $data);
     public function update($id, array $data);

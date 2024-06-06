@@ -24,7 +24,9 @@ class UserController extends Controller
 
     public function index()
     {
-        return response()->json($this->userRepository->all(), 200);
+        return response()->json($this->userRepository->paginate(10), 200);
+     //   return response()->json($this->userRepository->all(), 200);
+
 
 //        $users = $this->userRepository->paginate(5);
 //

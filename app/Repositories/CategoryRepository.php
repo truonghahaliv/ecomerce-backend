@@ -7,7 +7,7 @@ use App\Models\Category;
 
 class CategoryRepository implements CategoryRepositoryInterface
 {
-    public function all()
+    public function index()
     {
         return Category::all();
     }
@@ -16,7 +16,10 @@ class CategoryRepository implements CategoryRepositoryInterface
     {
         return Category::findOrFail($id);
     }
-
+    public function paginate()
+    {
+        return Category::paginate(10);
+    }
     public function create(array $data)
     {
         return Category::create($data);

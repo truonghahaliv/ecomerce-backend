@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -15,6 +15,7 @@ class UpdateCategoryRequest extends FormRequest
     {
         return [
             'name' => 'required|unique:categories|max:255',
+            'description' => 'nullable|max:255',
             // Thêm các rules khác nếu cần thiết
         ];
     }
