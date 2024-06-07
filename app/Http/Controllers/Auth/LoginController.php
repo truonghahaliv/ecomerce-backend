@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,17 +14,10 @@ use Illuminate\Validation\Rules;
 class LoginController extends Controller
 {
     //
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
         try {
-            $validateUser = Validator::make($request->all(), [
 
-                'email' => 'required', 'email',
-                'password' => 'required',
-            ]);
-            if ($validateUser->fails()) {
-                return response()->json($validateUser->errors(), 400);
-            }
 
             if (!Auth::attempt($request->only('email', 'password'))) {
                 return response()->json([
@@ -54,13 +48,10 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         // Revoke the token that was used to authenticate the current request...
-       \auth()->user()->tokens()->delete();
+        Auth::guard('web')->logout();
 
         return response()->json([
-            'status' => true,
-            'message' => 'User logged out successfully',
-            'data' => [],
-            'id' => \auth()->user()->id
-        ], 200);
+            'message' => 'Successfully logged out'
+        ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -12,17 +13,10 @@ use Illuminate\Validation\Rules;
 class RegisterController extends Controller
 {
     //
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
         try {
-            $validateUser = Validator::make($request->all(), [
-                'name' => ['required', 'string', 'max:255'],
-                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
-                'password' => ['required'],
-            ]);
-            if ($validateUser->fails()) {
-                return response()->json($validateUser->errors(), 400);
-            }
+
 
             $user = User::create([
                 'name' => $request->name,
