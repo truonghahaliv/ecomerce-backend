@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreProductRequest;
 use App\Http\Requests\Admin\UpdateProductRequest;
+use App\Models\Product;
 use App\Repositories\ProductRepository;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -20,7 +22,7 @@ class ProductController extends Controller
 
     public function index()
     {
-      //  return response()->json($this->productRepository->index(), 200);
+        //  return response()->json($this->productRepository->index(), 200);
         return response()->json($this->productRepository->paginate(10), 200);
     }
 
@@ -36,15 +38,27 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request)
     {
-        $uploadedFileUrl = Cloudinary::upload($request->file('image')->getRealPath(), [
-            'folder' => 'laravel-test',
-        ])->getSecurePath();
-        $data = array_merge($request->all(), ['image' => $uploadedFileUrl]);
-        $product = $this->productRepository->store($data);
-        return response()->json(['message' =>'Add product successful',
-            'code' =>201,
-            'product' => $product
-        ] );
+        Log::info('Request data:', $request->all());
+
+
+        try {
+//            $data = $request->only(['name', 'price', 'quantity', 'description']);
+//            if ($request->hasFile('image')) {
+//                $imagePath = $request->file('image')->store('products', 'public');
+//                $data['image'] = $imagePath;
+//            }
+            $product = $this->productRepository->store(request()->all());
+            //   $this->productRepository->store($data);
+            $categories = json_decode($request->categories);
+            $product->categories()->sync($categories);
+
+            return response()->json(['message' => 'Product created successfully', 'product' => $product], 201);
+        } catch (\Exception $e) {
+            // Log the error message
+            Log::error('Error creating product:', ['message' => $e->getMessage()]);
+
+            return response()->json(['error' => 'An error occurred while creating the product.'], 500);
+        }
     }
 
     public function update(UpdateProductRequest $request, $id)
