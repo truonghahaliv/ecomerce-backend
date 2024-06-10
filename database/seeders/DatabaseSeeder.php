@@ -29,5 +29,9 @@ class DatabaseSeeder extends Seeder
 
         // Generate 5 categories using the CategoryFactory
         Category::factory()->count(5)->create();
+        $this->call([
+            PermissionSeeder::class,
+            RoleSeeder::class,
+        ]);
     }
 }

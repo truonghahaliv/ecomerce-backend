@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules;
 
-class LoginController extends Controller
+class AuthenticationController extends Controller
 {
     //
     public function login(LoginRequest $request)
@@ -48,10 +48,13 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         // Revoke the token that was used to authenticate the current request...
-        Auth::guard('web')->logout();
+        // Revoke all tokens...
+        \auth()->user()->tokens()->delete();
+
 
         return response()->json([
-            'message' => 'Successfully logged out'
-        ]);
+            'message' => 'Successfully logged out',
+            'status'=> true,
+        ], 200);
     }
 }
