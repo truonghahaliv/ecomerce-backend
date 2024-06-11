@@ -8,7 +8,7 @@
         "php": "^8.2",
         "cloudinary-labs/cloudinary-laravel": "^2.1",
         "laravel/framework": "^11.0",
-        "laravel/sanctum": "^4.0",
+        "laravel/passport": "*",
         "laravel/tinker": "^2.9",
         "spatie/laravel-permission": "^6.7"
     },
