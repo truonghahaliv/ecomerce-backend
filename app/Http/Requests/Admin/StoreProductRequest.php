@@ -27,7 +27,6 @@ class StoreProductRequest extends FormRequest
             'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:1',
             'quantity_sold' => 'nullable|integer|min:0',
-
             'description' => 'required|string',
 //            'categories' => 'array',
 //            'categories.*' => 'integer|exists:categories,id',
