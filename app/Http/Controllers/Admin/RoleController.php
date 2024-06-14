@@ -43,7 +43,6 @@ class RoleController extends Controller
         try {
             // Giải mã JSON string thành mảng
             $permissions = json_decode($request->input('permissions'), true);
-            $users = json_decode($request->input('users'), true);
 
             // Tạo role mới
             $role = $this->roleRepository->create($request->all());
@@ -80,7 +79,7 @@ class RoleController extends Controller
     }
 
 
-    public function update( UpdateRoleRequest $request, $id)
+    public function update(Request $request, $id)
     {
         try {
             $role = $this->roleRepository->update($id, $request->all());
@@ -88,7 +87,8 @@ class RoleController extends Controller
 
             $this->roleRepository->deleteModelRolesByRoleId($request->id);
 
-            foreach ($request->users as $userId) {
+            $userId = $request->input('user_id');
+            if ($userId) {
                 $user = $this->userRepository->find($userId);
                 if ($user) {
                     $this->userRepository->assignRole($user, $role->id);

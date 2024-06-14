@@ -47,10 +47,10 @@ class ProductController extends Controller
 //                $imagePath = $request->file('image')->store('products', 'public');
 //                $data['image'] = $imagePath;
 //            }
-            $product = $this->productRepository->store(request()->all());
+            $product = $this->productRepository->store($request->all());
             //   $this->productRepository->store($data);
-            $categories = json_decode($request->categories);
-            $product->categories()->sync($categories);
+//            $categories = json_decode($request->categories);
+//            $product->categories()->sync($categories);
 
             return response()->json(['message' => 'Product created successfully', 'product' => $product], 201);
         } catch (\Exception $e) {
@@ -61,10 +61,13 @@ class ProductController extends Controller
         }
     }
 
-    public function update(UpdateProductRequest $request, $id)
+    public function update(StoreProductRequest $request, $id)
     {
         try {
             $product = $this->productRepository->update($id, $request->all());
+
+
+            $product->categories()->sync($request->categories);
             return response()->json([
                 'message' => 'Edit product successful',
                 'status' => 201,
