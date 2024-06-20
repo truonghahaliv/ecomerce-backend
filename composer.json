@@ -10,9 +10,11 @@
         "laravel/framework": "^11.0",
         "laravel/passport": "*",
         "laravel/tinker": "^2.9",
+        "predis/predis": "2.0",
         "spatie/laravel-permission": "^6.7"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.13",
         "fakerphp/faker": "^1.23",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",

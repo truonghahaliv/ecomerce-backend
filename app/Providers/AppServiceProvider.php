@@ -2,10 +2,13 @@
 
 namespace App\Providers;
 
+use App\Events\RegisteredEvent;
 use App\Interfaces\ProductRepositoryInterface;
 use App\Interfaces\UserRepositiryInterface;
+use App\Listeners\SendMailRegisteredListener;
 use App\Repositories\ProductRepository;
 use App\Repositories\UserRepository;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,5 +29,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        Event::listen(
+            RegisteredEvent::class,
+            SendMailRegisteredListener::class,
+        );
     }
 }
