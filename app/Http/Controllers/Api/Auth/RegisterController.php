@@ -1,15 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Api\Auth;
 
+use App\Events\RegisteredEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Models\User;
 use App\Repositories\UserRepository;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules;
 
 class RegisterController extends Controller
 {
@@ -26,14 +22,8 @@ class RegisterController extends Controller
         try {
 
             $user = $this->userRepository->store($request->all());
-
-
             $user->assignRole('viewer');
-
-
-//        RegisteredEvent::dispatch($user);
-
-
+            RegisteredEvent::dispatch($user);
             return response()->json([
                 'status' => true,
                 'message' => 'User register successfully',

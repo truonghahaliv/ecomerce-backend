@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreProductRequest;
-use App\Http\Requests\Admin\UpdateProductRequest;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
@@ -22,14 +22,24 @@ class ProductController extends Controller
 
     public function index()
     {
-        //  return response()->json($this->productRepository->index(), 200);
-        return response()->json($this->productRepository->paginate(10), 200);
+//        $products = Cache::remember('products', 60, function () {
+//            return Product::paginate(1000);
+//        });
+//$products = $this->productRepository->index();
+        $products = Product::paginate(1000);
+       Cache::put('product', $products, 60);
+        return response()->json($products, 200);
     }
 
 
     public function show($id)
     {
-        $product = $this->productRepository->getById($id);
+        $product = Cache::remember("product_{$id}", 60, function () use ($id) {
+            return $this->productRepository->getById($id);
+        });
+
+//        $product =  $this->productRepository->getById($id);
+//        Cache::put('product', $product, 60);
         if (is_null($product)) {
             return response()->json(['message' => 'Product not found'], 404);
         }
@@ -39,34 +49,34 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         Log::info('Request data:', $request->all());
-
-
         try {
-//            $data = $request->only(['name', 'price', 'quantity', 'description']);
-//            if ($request->hasFile('image')) {
-//                $imagePath = $request->file('image')->store('products', 'public');
-//                $data['image'] = $imagePath;
-//            }
-            $product = $this->productRepository->store($request->all());
+            $data = $request->all();
+
+            if ($request->hasFile('image')) {
+                $data['image'] = $request->file('image')->store('product_images', 'public');
+            }
+            $product = $this->productRepository->create($data);
             //   $this->productRepository->store($data);
-//            $categories = json_decode($request->categories);
-//            $product->categories()->sync($categories);
+            $categories = json_decode($request->categories);
+            $product->categories()->sync($categories);
 
             return response()->json(['message' => 'Product created successfully', 'product' => $product], 201);
         } catch (\Exception $e) {
             // Log the error message
             Log::error('Error creating product:', ['message' => $e->getMessage()]);
 
-            return response()->json(['error' => 'An error occurred while creating the product.'], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
     public function update(StoreProductRequest $request, $id)
     {
         try {
-            $product = $this->productRepository->update($id, $request->all());
-
-
+            $data = $request->all();
+            if ($request->hasFile('image')) {
+                $data['image'] = $request->file('image')->store('product_images', 'public');
+            }
+            $product = $this->productRepository->update($id, $data);
             $product->categories()->sync($request->categories);
             return response()->json([
                 'message' => 'Edit product successful',
@@ -84,14 +94,26 @@ class ProductController extends Controller
 
     public function destroy($id)
     {
-        $product = $this->productRepository->getById($id);
-        if (is_null($product)) {
-            return response()->json(['message' => 'Product not found'], 404);
-        }
+        try {
+            $product = $this->productRepository->getById($id);
+            if (is_null($product)) {
+                return response()->json(['message' => 'Product not found'], 404);
+            }
 
-        $this->productRepository->delete($id);
-        return response()->json(['message' => 'Product deleted successfully'], 204);
+            $this->productRepository->delete($id);
+            return response()->json(['message' => 'Product deleted successfully', 'status' => 204]
+            );
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Edit product unsuccessful',
+                'status' => 500,
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
+
+
+
 
 //    public function fileImportIndex(): View
 //    {
