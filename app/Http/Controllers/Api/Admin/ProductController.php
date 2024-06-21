@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
-    protected ProductRepository $productRepository;
+    private ProductRepository $productRepository;
 
     public function __construct(ProductRepository $productRepository)
     {
@@ -25,21 +25,16 @@ class ProductController extends Controller
 //        $products = Cache::remember('products', 60, function () {
 //            return Product::paginate(1000);
 //        });
-//$products = $this->productRepository->index();
-        $products = Product::paginate(1000);
-       Cache::put('product', $products, 60);
+        $products = $this->productRepository->index();
+        Cache::put('product', $products, 60);
         return response()->json($products, 200);
     }
 
 
     public function show($id)
     {
-        $product = Cache::remember("product_{$id}", 60, function () use ($id) {
-            return $this->productRepository->getById($id);
-        });
-
-//        $product =  $this->productRepository->getById($id);
-//        Cache::put('product', $product, 60);
+       $product =$this->productRepository->getById($id);
+//
         if (is_null($product)) {
             return response()->json(['message' => 'Product not found'], 404);
         }

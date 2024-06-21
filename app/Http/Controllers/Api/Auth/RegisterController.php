@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Events\RegisteredEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Jobs\SendMailRegisteredJob;
 use App\Repositories\UserRepository;
 
 class RegisterController extends Controller
@@ -23,7 +24,7 @@ class RegisterController extends Controller
 
             $user = $this->userRepository->store($request->all());
             $user->assignRole('viewer');
-            RegisteredEvent::dispatch($user);
+            SendMailRegisteredJob::dispatch($user);
             return response()->json([
                 'status' => true,
                 'message' => 'User register successfully',

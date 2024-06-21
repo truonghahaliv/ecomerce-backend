@@ -10,7 +10,9 @@
         "laravel/framework": "^11.0",
         "laravel/passport": "*",
         "laravel/tinker": "^2.9",
+        "maatwebsite/excel": "^3.1",
         "predis/predis": "2.0",
+        "rap2hpoutre/fast-excel": "^5.5",
         "spatie/laravel-permission": "^6.7"
     },
     "require-dev": {
