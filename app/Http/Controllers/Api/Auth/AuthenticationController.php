@@ -20,18 +20,18 @@ class AuthenticationController extends Controller
                     'message' => "Email or password is incorrect",
                 ], 401); // 401 is more appropriate for unauthorized access
             }
+            $user = Auth::user();
+            $tokenResult = $user->createToken(' Personal Access Token');
 
-            $user = User::where('email', $request->email)->first();
-            $tokenResult = $user->createToken('Access Token');
             $token = $tokenResult->accessToken;
 
-            // Store the token in the session
+
             Session::put('access_token', $token);
 
             return response()->json([
                 'status' => true,
                 'message' => 'Welcome',
-                'token' => $token,
+               'token' => $token,
             ], 200);
 
         } catch (\Throwable $throwable) {
@@ -48,7 +48,7 @@ class AuthenticationController extends Controller
         $request->user()->token()->revoke();
 
         // Remove the token from the session
-        Session::forget('access_token');
+        Session::forget('Personal Access Token');
 
         return response()->json([
             "message" => "User logged out successfully"
